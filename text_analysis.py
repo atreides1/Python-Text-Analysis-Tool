@@ -15,8 +15,7 @@ from nltk.corpus import stopwords
 def read_input_file():
     input_file = sys.argv[1]  # get filename from command line
     f = open(input_file, 'r')
-    # save contents of file
-    contents = f.read()
+    contents = f.read()  # save contents of file
     f.close()
     return contents
     #return "Error reading input file"
@@ -46,22 +45,23 @@ def organize_tokens(tokens):
     token_dict = {tkn : tokens.count(tkn) for tkn in tokens }
     return dict(sorted(token_dict.items(), key = lambda k: k[1], reverse=True))
 
-''' creates a piechart of the top 5 words '''
+''' creates a piechart of the top 10 words '''
 def create_piechart(tokens):
-    if len(tokens) > 5:
-        tokens = dict(itertools.islice(tokens.items(), 5))
+    if len(tokens) > 10:
+        tokens = dict(itertools.islice(tokens.items(), 10))
     words = [x for x, y in tokens.items()]
     count  = [y for x, y in tokens.items()]
 
-    plt.pie(count, labels=words)
+    plt.pie(count, labels=words, autopct=lambda p: '{:.0f}'.format(p * sum(count) / 100))
     plt.axis('equal')
+    plt.title('Ten Most Frequently Used Words in the Document')
     plt.savefig('piechart.png')
     plt.show()
     
 
 def print_stats(total_word_count, token_dict):
     print("")
-    print("There are", total_word_count, "words in the document.")
+    print("There are", total_word_count, "words total in the document.")
     print("")
     print(token_dict)
 
