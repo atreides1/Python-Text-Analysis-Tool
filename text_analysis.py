@@ -1,4 +1,3 @@
-# Todo - error handling for reading file
 import itertools
 import matplotlib.pyplot as plt
 import nltk
@@ -14,11 +13,9 @@ from nltk.corpus import stopwords
 ''' returns the contents (as a string) of the input file '''
 def read_input_file():
     input_file = sys.argv[1]  # get filename from command line
-    f = open(input_file, 'r')
-    contents = f.read()  # save contents of file
-    f.close()
+    with open (input_file, encoding='utf8') as f:
+        contents = f.read()  # save contents of file
     return contents
-    #return "Error reading input file"
 
 ''' given a string, returns all the tokens (words)
     as elements in a list. Gets rid of punctuation, too.
@@ -26,6 +23,7 @@ def read_input_file():
 def tokenize(contents):
     # remove punctuation
     contents = re.sub('[(){}<>,?!.:;]', '', contents)
+    contents = re.sub(u'[\u201c\u201d]','', contents)  #gets rid of utf-8 ""
     # use whitespace as deliminator for tokenization 
     contents = contents.split()
     # lowercase all tokens for easy stopword removal later
@@ -49,7 +47,7 @@ def organize_tokens(tokens):
 def create_piechart(tokens):
     if len(tokens) > 10:
         tokens = dict(itertools.islice(tokens.items(), 10))
-    words = [x for x, y in tokens.items()]
+    words  = [x for x, y in tokens.items()]
     count  = [y for x, y in tokens.items()]
 
     plt.pie(count, labels=words, autopct=lambda p: '{:.0f}'.format(p * sum(count) / 100))
@@ -66,12 +64,13 @@ def print_stats(total_word_count, token_dict):
     print(token_dict)
 
 def main():
-    stopword_list = stopwords.words("english")
-    file_contents = read_input_file()
-    tokens = tokenize(file_contents)
-    total_word_count = len(tokens)  # to keep track of word count
-    tokens = remove_stopwords(tokens, stopword_list)
-    token_dict = organize_tokens(tokens)
+    stopword_list    = stopwords.words("english")
+    file_contents    = read_input_file()
+    all_tokens       = tokenize(file_contents)
+    total_word_count = len(all_tokens)  # to keep track of word count
+    tokens           = remove_stopwords(all_tokens, stopword_list)
+    token_dict       = organize_tokens(tokens)
+
     create_piechart(token_dict)
     print_stats(total_word_count, token_dict)
 
