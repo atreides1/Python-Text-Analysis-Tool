@@ -23,7 +23,7 @@ def read_input_file():
 def tokenize(contents):
     # remove punctuation
     contents = re.sub('[(){}<>,?!.:;]', '', contents)
-    contents = re.sub(u'[\u201c\u201d]','', contents)  #gets rid of utf-8 ""
+    contents = re.sub(u'[\u201c\u201d]','', contents)  # gets rid of utf-8 ""
     # use whitespace as deliminator for tokenization 
     contents = contents.split()
     # lowercase all tokens for easy stopword removal later
